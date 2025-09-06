@@ -2,7 +2,7 @@
   <div class="container">
     <nav class="nav">
       <div class="brand">
-        <img class="logo" src="assets/img/avatar.jpg" alt="老王头像" onclick="location.href='pages/about.html'" />
+        <img class="logo" src="assets/img/avatar.jpg" alt="老王头像" onclick="location.href=(location.pathname.includes('/pages/')?'about.html':'pages/about.html')" />
         <a class="title" href="index.html">老王研究所</a>
         <div class="social-card">
           <div class="title">关注老王</div>

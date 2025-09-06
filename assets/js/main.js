@@ -31,6 +31,7 @@
     if(headerEl){ headerEl.innerHTML = await fetchText(base + 'partials/header.html'); }
     if(footerEl){ footerEl.innerHTML = await fetchText(base + 'partials/footer.html'); }
     fixPartialPaths(base);
+    fixDocumentPaths(base);
     // Auto-detect backend health to turn off mock mode
     try{
       const res = await fetch('/api/health', { cache: 'no-cache' });
@@ -280,6 +281,25 @@
       scope.querySelectorAll('#header img[src], #footer img[src]').forEach(img=>{
         const src = img.getAttribute('src')||'';
         if(src.startsWith('./') || src.startsWith('../') || src.startsWith('http')) return;
+        if(needPrefix(src)) img.setAttribute('src', join(base, src));
+      });
+    }catch(_){/* noop */}
+  }
+
+  function fixDocumentPaths(base){
+    try{
+      const scope = document;
+      const needPrefix = (v)=> /^(assets\/|pages\/|index\.html$|404\.html$)/.test(v||'');
+      const join = (b, v)=> (b||'./') + v;
+      scope.querySelectorAll('main a[href]').forEach(a=>{
+        const href = a.getAttribute('href')||'';
+        if(href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('#')) return;
+        if(href.startsWith('./') || href.startsWith('../')) return;
+        if(needPrefix(href)) a.setAttribute('href', join(base, href));
+      });
+      scope.querySelectorAll('main img[src]').forEach(img=>{
+        const src = img.getAttribute('src')||'';
+        if(src.startsWith('http') || src.startsWith('./') || src.startsWith('../')) return;
         if(needPrefix(src)) img.setAttribute('src', join(base, src));
       });
     }catch(_){/* noop */}
